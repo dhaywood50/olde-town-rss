@@ -288,6 +288,28 @@ app.get('/rss.xml', async (_, res) => {
     res.set('Cache-Control', 'public, max-age=300');
     res.type('application/rss+xml; charset=utf-8').send(cache.xml);
   } catch (error) {
+    const now = new Date().toUTCString();
+    const fallbackXml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Olde Town Realty Listings</title>
+    <link>${xmlEscape(SOURCE_URL)}</link>
+    <description>Feed temporarily unavailable; retrying automatically.</description>
+    <language>en-us</language>
+    <lastBuildDate>${xmlEscape(now)}</lastBuildDate>
+  </channel>
+</rss>`;
+
+    res.set('Cache-Control', 'public, max-age=120');
+    res.type('application/rss+xml; charset=utf-8').send(fallbackXml);
+  }
+});
+
+    }
+
+    res.set('Cache-Control', 'public, max-age=300');
+    res.type('application/rss+xml; charset=utf-8').send(cache.xml);
+  } catch (error) {
     res.status(502).json({
       error: 'Failed to build RSS feed',
       message: error instanceof Error ? error.message : String(error),
