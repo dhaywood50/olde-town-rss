@@ -260,9 +260,6 @@ async function generateFeed() {
     }
   }
 
-  if (!items.length) {
-    throw new Error('No listings found on source page or results endpoint.');
-  }
 
   return buildRssXml(items);
 }
